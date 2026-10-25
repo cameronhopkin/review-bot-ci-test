@@ -6,9 +6,12 @@
 # pushes.
 #
 # One setup step: GitLab's built-in job token cannot comment on merge
-# requests. Create a project access token (Settings > Access tokens,
-# role Reporter, scope api) and add it as a masked CI/CD variable named
-# REVIEW_BOT_TOKEN (Settings > CI/CD > Variables).
+# requests, and on GitLab.com Free you cannot create a project access
+# token. Create a fine-grained personal access token with exactly
+# read_work_item, create_work_item and update_work_item (no repository
+# permissions), expiring right after the workshop, and add it as a masked,
+# unprotected CI/CD variable named REVIEW_BOT_TOKEN (Settings > CI/CD >
+# Variables). See ci-templates/README.md.
 #
 # Advisory only: the job never fails the pipeline.
 # The model runs inside the runner. No cloud model.
@@ -47,7 +50,7 @@ security-review:
   script:
     - git fetch --quiet origin "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
     - git diff "origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME...HEAD" > mr.diff
-    - .venv/bin/python reference-pipeline/review.py --diff mr.diff > findings.json
+    - .venv/bin/python reference-pipeline/review.py --diff mr.diff --sweep > findings.json
     - cat findings.json
   after_script:
-    - .venv/bin/python reference-pipeline/post_comment.py findings.json
+    - .venv/bin/python reference-pipeline/post_comment.py findings.json --suggest --diff mr.diff

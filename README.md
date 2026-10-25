@@ -31,6 +31,10 @@ Both are reasoning-capable models. The bot sets reasoning explicitly for each on
 
 The 120B-class self-hosted tier is not something you run on a laptop. It appears in Module 7 as the scale-up reference architecture.
 
+## Get started
+
+Follow [`lab-guide/00-setup.md`](lab-guide/00-setup.md): clone this repository, run the setup script, and see `SMOKE TEST PASSED`. Every lab is in [`lab-guide/`](lab-guide/).
+
 ## Two-day outline
 
 Both days run 8:00 AM to 5:00 PM with an hour for lunch and two breaks.
@@ -78,15 +82,17 @@ Please complete all of this **before you travel**. The model download is several
 
 Any one of these:
 
-- Windows 11
-- macOS 13 Ventura or newer, Apple Silicon or Intel
-- Linux, Ubuntu 22.04 or newer or equivalent
+- macOS 13 Ventura or newer, Apple Silicon or Intel. Apple Silicon is the smoothest path.
+- Linux, Ubuntu 22.04 or newer or equivalent.
+- **Windows:** PowerShell works (Path C in `lab-guide/00-setup.md`), and so does WSL with Ubuntu (Path A). Every PowerShell command is on one page: [`lab-guide/WINDOWS-CHEATSHEET.md`](lab-guide/WINDOWS-CHEATSHEET.md).
+- **Any laptop you cannot install software on:** use a GitHub Codespace in your browser instead. It is a Linux machine with everything preinstalled, and it needs only a free GitHub account. It has no GPU, so reviews are slower: about 1 to 2 minutes per file. See `lab-guide/00-setup.md`.
+
 
 ### Software
 
 You need the ability to install software on the laptop you bring. None of the tools below require administrator rights, but some corporate device management blocks installers outright. Please check this before the event, because there is no way to fix it in the room.
 
-1. **Python 3.11 or newer.** Check with `python --version` (Windows) or `python3 --version` (macOS and Linux). If it is missing or older, install from [python.org/downloads](https://www.python.org/downloads/). On Windows, tick "Add python.exe to PATH" in the installer.
+1. **Python 3.11 or newer.** Check with `python3 --version`. If it is missing or older, install from [python.org/downloads](https://www.python.org/downloads/).
 2. **Git.** Check with `git --version`. If it is missing, install from [git-scm.com/downloads](https://git-scm.com/downloads).
 3. **A GitHub or GitLab account.** The free tier is all you need. You will push a small repository and open a pull or merge request against it.
 4. **Ollama.** Download from [ollama.com/download](https://ollama.com/download) and install it. Check with `ollama --version`.
@@ -99,27 +105,15 @@ With Ollama installed and running:
 ollama pull qwen3.5:9b
 ```
 
-```powershell
-ollama pull qwen3.5:9b
-```
-
 That is about 6.6 GB. If your laptop has 24 GB of RAM or more, also pull the Module 2 model, which is about 13 GB:
 
 ```bash
 ollama pull gpt-oss:20b
 ```
 
-```powershell
-ollama pull gpt-oss:20b
-```
-
 Confirm the download worked:
 
 ```bash
-ollama list
-```
-
-```powershell
 ollama list
 ```
 
@@ -136,11 +130,6 @@ ollama pull qwen2.5-coder:7b
 export REVIEW_MODEL=qwen2.5-coder:7b
 ```
 
-```powershell
-ollama pull qwen2.5-coder:7b
-$env:REVIEW_MODEL = "qwen2.5-coder:7b"
-```
-
 **2. Pair with a neighbour.** The labs work fine with two people at one machine, and Day 2 involves attacking each other's bots anyway.
 
 The tooling also reads `OLLAMA_HOST`, so it can point at a model served from another machine if you have one available:
@@ -149,22 +138,23 @@ The tooling also reads `OLLAMA_HOST`, so it can point at a model served from ano
 export OLLAMA_HOST=http://<address>:11434
 ```
 
-```powershell
-$env:OLLAMA_HOST = "http://<address>:11434"
-```
-
 That is a mechanism, not a promise. Plan on your own laptop running the model.
 
 ## Structure
 
-- `reference-pipeline/` Working review bot: setup scripts, CLI, smoke test, and tests
-- `target-app/` Intentionally vulnerable Flask application used throughout the labs
+- `reference-pipeline/` Working review bot: setup scripts, CLI, comment poster, smoke test, and tests
+- `target-app/` Intentionally vulnerable Flask application used throughout the labs, with its answer key in `PLANTED.md`
 - `prompts/` Prompt templates with documentation
-- `eval-harness/` Detection-rate measurement and capstone scoring
-- `defense-patterns/` Prompt injection mitigations specific to the code review context
+- `ci-templates/` GitHub Actions and GitLab CI templates for free runners, and the Module 4 practice patch
+- `attack-lab/` Module 5 attacks on the bot, run unhardened and hardened
+- `defense-patterns/` The hardening checklist, the take-home deliverable
+- `production/` Module 7 reference architecture and the TCO model (`tco-model.xlsx`)
+- `eval-harness/` Module 8 capstone scoring and the planted-bug scorer
+- `instructor/` Copying models to USB drives for offline installs
+- `lab-guide/` Step-by-step instructions for every module
+- `.devcontainer/` GitHub Codespaces setup, for Windows and anyone without a capable laptop
 - `docs/` Build brief, model evaluation, and the proposal of record
 - `slides/` Workshop slides (published after delivery)
-- `lab-guide/` Step-by-step workshop instructions (published after delivery)
 
 ## Topics
 
